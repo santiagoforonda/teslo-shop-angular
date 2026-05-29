@@ -28,9 +28,7 @@ export class ProductService{
         offset:offset,
         gender:gender
       }
-    }).pipe(
-      tap((resp)=> console.log(resp))
-    );
+    })
   }
 
 

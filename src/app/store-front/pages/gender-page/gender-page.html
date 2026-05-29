@@ -12,3 +12,5 @@
     <p>No hay productos</p>
   }
 </div>
+
+<pagination-component [pages]="productResource.value()?.pages ?? 0" [currentPage]="paginationService.currentPage()" ></pagination-component>
