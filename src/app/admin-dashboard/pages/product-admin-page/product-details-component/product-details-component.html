@@ -1,0 +1,96 @@
+<h1 class="text-2xl font-bold">{{ product().title }}</h1>
+<div class="divider"></div>
+
+<form [formGroup]="productForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="onSubmit()">
+  <!-- Datos generales -->
+  <div class="flex flex-col gap-2">
+    <h2 class="text-2xl font-bold h-12">Datos generales</h2>
+
+    <input
+      type="text"
+      placeholder="Título"
+      class="input input-bordered w-full"
+      formControlName="title"
+      [class.border-red-500]="productForm.get('title')?.hasError ?? false"
+    />
+    <form-error-label-component [control]="productForm.get('title')!"></form-error-label-component>
+
+    <input type="text" placeholder="Slug" class="input input-bordered w-full" formControlName="slug"/>
+    <form-error-label-component [control]="productForm.get('slug')!"></form-error-label-component>
+
+    <textarea
+      class="textarea textarea-bordered"
+      placeholder="Descripción"
+      rows="6"
+      formControlName="description"
+    ></textarea>
+    <form-error-label-component [control]="productForm.get('description')!"></form-error-label-component>
+
+    <h2 class="text-lg font-bold">Datos de venta</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div>
+        <input
+        type="number"
+        placeholder="Precio"
+        class="input input-bordered w-full"
+        formControlName="price"
+      />
+      <form-error-label-component [control]="productForm.get('price')!"></form-error-label-component>
+      </div>
+
+
+      <div>
+        <input
+        type="number"
+        placeholder="Inventario"
+        class="input input-bordered w-full"
+        formControlName="stock"
+      />
+      <form-error-label-component [control]="productForm.get('stock')!"></form-error-label-component>
+      </div>
+
+
+    </div>
+
+    <!-- tags -->
+    <input type="text" placeholder="Tags" class="input input-bordered w-full" formControlName="tags" />
+    <form-error-label-component [control]="productForm.get('tags')!"></form-error-label-component>
+
+    <!-- Botones para el género -->
+    <div class="grid grid-cols-3 gap-2">
+       <button type="button" class="btn btn-outline"  [class.btn-primary]="productForm.value.gender==='men'" (click)="productForm.patchValue({gender:'men'})" >  Masculino</button>
+      <button type="button" class="btn btn-outline" [class.btn-accent]="productForm.value.gender==='women'" (click)="productForm.patchValue({gender:'women'})" >Femenino</button>
+      <button type="button" class="btn btn-outline" [class.btn-warning]="productForm.value.gender=='kid'" (click)="productForm.patchValue({gender:'kid'})" >Kids</button>
+      <button type="button" class="btn btn-outline" [class.btn-secondary]="productForm.value.gender==='unisex' " (click)="productForm.patchValue({gender:'unisex'})">Unisex</button>
+    </div>
+
+    <!-- <select class="select select-bordered w-full">
+      <option value="male">Masculino</option>
+      <option value="female">Femenino</option>
+      <option value="unisex">Unisex</option>
+    </select> -->
+
+    <!-- Sizes -->
+    <div class="grid grid-cols-6 gap-2">
+      @for (size of sizes; track size) {
+      <button type="button" class="btn btn-sm btn-outline" [class.btn-secondary]="productForm.value.sizes?.includes(size)"  (click)="onSizeClicked(size)" >{{ size }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Imágenes -->
+  <div class="flex flex-col gap-2">
+    <div class="flex justify-end h-12">
+      <button class="btn btn-secondary" type="submit">
+        <!-- <span class="loading loading-spinner loading-sm"></span> -->
+
+        Guardar
+      </button>
+    </div>
+
+    <product-carouel-component [images]="product().images"></product-carouel-component>
+
+    <input type="file" class="file-input file-input-bordered w-full mt-4" />
+  </div>
+</form>
