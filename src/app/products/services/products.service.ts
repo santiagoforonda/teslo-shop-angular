@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Gender, Product, ProductResponse } from "../interfaces/product.interface";
-import { Observable, of, tap } from "rxjs";
+import { forkJoin, map, Observable, of, switchMap } from "rxjs";
 import { environment } from "../../../environments/environment";
 
 
@@ -57,14 +57,45 @@ export class ProductService{
     return this.http.get<Product>(`${baseUrl}/products/${id}`);
   }
 
-  updateProduct(productLike:Partial<Product>, id:string):Observable<Product>{
-    return this.http.patch<Product>(`${baseUrl}/products/${id}`,{
+  updateProduct(productLike:Partial<Product>, id:string,imageFileList?:FileList):Observable<Product>{
+
+    const currentImages = productLike.images ?? [];
+
+    return this.upLoadImages(imageFileList).pipe(
+        map(imageNames =>({
+          ...productLike,
+          images:[...currentImages,...imageNames]
+        })),
+        switchMap((updatedProduct)=>
+        this.http.patch<Product>(`${baseUrl}/products/${id}`, productLike))
+    )
+    /*return this.http.patch<Product>(`${baseUrl}/products/${id}`,{
       productLike
-    })
+    })*/
   }
 
 
-  crearProducto(productLike:Partial<Product>):Observable<Product>{
+  crearProducto(productLike:Partial<Product>, imageFileList?:FileList):Observable<Product>{
     return this.http.post<Product>(`${baseUrl}/products`,productLike);
+  }
+
+  upLoadImages(images?:FileList):Observable<string[]>{
+    if(!images){
+      return of([]);
+    }
+
+    const uploadObservables = Array.from(images).map(imageFile => this.uploadImage(imageFile));
+
+    return forkJoin(uploadObservables);
+
+  }
+
+  uploadImage(iamge:File):Observable<string>{
+    const formData = new FormData();
+    formData.append("file",iamge);
+
+    return this.http.post<{fileName:string}>(`${baseUrl}/files/product`,formData).pipe(
+      map(resp => resp.fileName)
+    );
   }
 }

@@ -89,8 +89,26 @@
       </button>
     </div>
 
-    <product-carouel-component [images]="product().images"></product-carouel-component>
+    <product-carouel-component [images]="imagesToCarousel()"></product-carouel-component>
 
-    <input type="file" class="file-input file-input-bordered w-full mt-4" />
+    <input type="file"
+    multiple
+    accept="image/*"
+    class="file-input file-input-bordered w-full mt-4"
+    (change)="onFileCahnged($event)"
+    />
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      @for(image of tempImages(); track $index){
+        <img [src]="image" alt="Temporal iamge"  class="w-full object-cover rounded-xl"/>
+      }
+    </div>
   </div>
 </form>
+
+@if (wasSave()) {
+  <div class="alert alert-success fixed bottom-4 right-4 w-80">
+  <span>Datos actualizados correctamente</span>
+</div>
+}
+
